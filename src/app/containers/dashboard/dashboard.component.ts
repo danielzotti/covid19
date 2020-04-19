@@ -25,21 +25,19 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
 
     this.getCountries();
-    // this.selectCountry({Slug: 'italy', Country: 'Italy', ISO2: 'it'})
+    this.selectCountry({Slug: 'italy', Country: 'Italy', ISO2: 'it'});
   }
 
   getCountries() {
     this.http.get(`${this.countriesUrl}`).subscribe(
       (res: Array<Country>) => {
         this.countries = res.sort((a, b) => a.Slug.localeCompare(b.Slug));
-        console.log(this.countries)
       }
     )
   }
 
   selectCountry(country: Country) {
     this.selectedCountry = country;
-    console.log(country)
 
     this.http.get(`${this.dayOneByCountryUrl}/${country.Slug}`).subscribe(
       (res: Array<ChartItemApi>) => {
@@ -65,20 +63,20 @@ export class DashboardComponent implements OnInit {
         {
           label: 'Confirmed',
           data: fn(res, Cases.Confirmed), // res.map(i => i.Confirmed),
-          backgroundColor: 'rgba(50, 50, 255, 0.1)',
-          borderColor: 'rgb(50, 50, 255)',
+          backgroundColor: 'rgba(51, 153, 255, 0.1)',
+          borderColor: 'rgb(51, 153, 255)',
         },
         {
           label: 'Deaths',
           data: fn(res, Cases.Deaths), // res.map(i => i.Deaths),
-          backgroundColor: 'rgba(255, 50, 50, 0.1)',
-          borderColor: 'rgb(255, 50, 50)',
+          backgroundColor: 'rgba(255, 80, 80, 0.1)',
+          borderColor: 'rgb(255, 80, 80)',
         },
         {
           label: 'Recovered',
           data: fn(res, Cases.Recovered), // res.map(i => i.Recovered),
-          backgroundColor: 'rgba(50, 255, 50, 0.1)',
-          borderColor: 'rgb(50, 255, 50)',
+          backgroundColor: 'rgba(80, 255, 80, 0.1)',
+          borderColor: 'rgb(80, 255, 80)',
         }
 
       ]
