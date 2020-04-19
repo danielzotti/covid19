@@ -55,7 +55,9 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/chart.js/dist/Chart.bundle.js"
+              "node_modules/chart.js/dist/Chart.bundle.js",
+              "node_modules/hammerjs/hammer.js",
+              "node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.js"
             ]
           },
           "configurations": {
