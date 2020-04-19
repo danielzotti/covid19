@@ -19,3 +19,9 @@ export enum Cases {
   Recovered = "Recovered",
   Active = "Active",
 }
+
+export interface Country {
+  Country: string,
+  Slug: string,
+  ISO2: string
+}

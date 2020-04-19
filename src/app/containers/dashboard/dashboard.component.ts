@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartData } from "chart.js";
 import { HttpClient } from "@angular/common/http";
-import { Cases, ChartItemApi } from "./dashboard.models";
+import { Cases, ChartItemApi, Country } from "./dashboard.models";
 
 @Component({
   selector: 'dz-dashboard',
@@ -9,15 +9,39 @@ import { Cases, ChartItemApi } from "./dashboard.models";
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  total: ChartData;
 
+  private readonly apiBaseUrl = "https://api.covid19api.com";
+  private readonly countriesUrl = `${this.apiBaseUrl}/countries`;
+  private readonly dayOneByCountryUrl = `${this.apiBaseUrl}/dayone/country`;
+
+  countries: Array<Country>;
+  selectedCountry: Country;
+  total: ChartData;
   daily: ChartData;
 
   constructor(private http: HttpClient) {
   }
 
   ngOnInit(): void {
-    this.http.get('https://api.covid19api.com/dayone/country/italy').subscribe(
+
+    this.getCountries();
+    // this.selectCountry({Slug: 'italy', Country: 'Italy', ISO2: 'it'})
+  }
+
+  getCountries() {
+    this.http.get(`${this.countriesUrl}`).subscribe(
+      (res: Array<Country>) => {
+        this.countries = res.sort((a, b) => a.Slug.localeCompare(b.Slug));
+        console.log(this.countries)
+      }
+    )
+  }
+
+  selectCountry(country: Country) {
+    this.selectedCountry = country;
+    console.log(country)
+
+    this.http.get(`${this.dayOneByCountryUrl}/${country.Slug}`).subscribe(
       (res: Array<ChartItemApi>) => {
         this.total = this.buildTotal(res);
         this.daily = this.buildDaily(res);

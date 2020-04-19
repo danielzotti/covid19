@@ -1,7 +1,16 @@
 <div class="container">
-  <h1>Total</h1>
+  <h1>
+    {{selectedCountry ? selectedCountry.Country : 'Choose country' }}
+  </h1>
+
+  <select [ngModel]="selectedCountry" (ngModelChange)="selectCountry($event)" class="form-control">
+    <option *ngFor="let country of countries"
+            [ngValue]="country">{{country.Country}}</option>
+  </select>
+
+  <h2>Total</h2>
   <dz-chart [data]="total"></dz-chart>
 
-  <h1>Daily</h1>
+  <h2>Daily</h2>
   <dz-chart [data]="daily"></dz-chart>
 </div>
