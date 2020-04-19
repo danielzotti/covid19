@@ -19,6 +19,9 @@ export class ChartComponent implements OnInit, OnChanges, AfterViewInit {
   @Input()
   data;
 
+  @Input()
+  theme: 'dark' | 'light' = 'light';
+
   @ViewChild("chart")
   private elementRef: ElementRef<HTMLCanvasElement>;
 
@@ -54,10 +57,27 @@ export class ChartComponent implements OnInit, OnChanges, AfterViewInit {
         type: 'line',
         // Configuration options go here
         options: {
+          legend: {
+            labels: {
+              fontColor: this.theme === 'dark' ? 'white' : 'black',
+            },
+          },
           scales: {
             yAxes: [{
+              gridLines: {
+                color: this.theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+              },
               ticks: {
-                beginAtZero:true
+                beginAtZero: true,
+                fontColor: this.theme === 'dark' ? 'white' : 'black',
+              },
+            }],
+            xAxes: [{
+              gridLines: {
+                color: this.theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+              },
+              ticks: {
+                fontColor: this.theme === 'dark' ? 'white' : 'black',
               }
             }]
           },

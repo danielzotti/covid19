@@ -1,16 +1,20 @@
 <div class="container">
   <h1>
-    {{selectedCountry ? selectedCountry.Country : 'Choose country' }}
+    Covid-19 in {{selectedCountry ? selectedCountry.Country : 'Choose country' }}
   </h1>
 
-  <select [ngModel]="selectedCountry" (ngModelChange)="selectCountry($event)" class="form-control">
-    <option *ngFor="let country of countries"
-            [ngValue]="country">{{country.Country}}</option>
-  </select>
+  <div>
+    <label>Select country: </label>
+    <select [ngModel]="selectedCountry" (ngModelChange)="selectCountry($event)" class="form-control">
+      <option *ngFor="let country of countries"
+              [ngValue]="country">{{country.Country}}</option>
+    </select>
+  </div>
+
 
   <h2>Total</h2>
-  <dz-chart [data]="total"></dz-chart>
+  <dz-chart [data]="total" theme="dark"></dz-chart>
 
   <h2>Daily</h2>
-  <dz-chart [data]="daily"></dz-chart>
+  <dz-chart [data]="daily" theme="dark"></dz-chart>
 </div>
