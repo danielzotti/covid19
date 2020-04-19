@@ -1,4 +1,13 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { Chart } from 'chart.js'
 
 @Component({
@@ -6,9 +15,14 @@ import { Chart } from 'chart.js'
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss']
 })
-export class ChartComponent implements OnInit, OnChanges {
+export class ChartComponent implements OnInit, OnChanges, AfterViewInit {
   @Input()
   data;
+
+  @ViewChild("chart")
+  private elementRef: ElementRef<HTMLCanvasElement>;
+
+  chartEl
 
   chart: Chart;
   ctx: CanvasRenderingContext2D;
@@ -17,26 +31,7 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.ctx = (<HTMLCanvasElement>document.getElementById('covid-chart')).getContext('2d');
-    this.chart = new Chart(this.ctx, {
-      // The type of chart we want to create
-      type: 'line',
 
-      // The data for our dataset
-      data: this.data,
-      // data: {
-      //   labels: this.labels, //['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      //   datasets: [{
-      //     label: 'Covid-19',
-      //     backgroundColor: 'rgb(255, 99, 132)',
-      //     borderColor: 'rgb(255, 99, 132)',
-      //     data: this.data //: [0, 10, 5, 2, 20, 30, 45]
-      //   }]
-      // },
-
-      // Configuration options go here
-      options: {}
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -44,6 +39,24 @@ export class ChartComponent implements OnInit, OnChanges {
       this.chart.data = this.data;
       this.chart.update();
     }
+
+  }
+
+  ngAfterViewInit() {
+    this.chartEl = this.elementRef.nativeElement;
+
+    if (this.chartEl) {
+
+      this.ctx = this.chartEl.getContext('2d');
+
+      this.chart = new Chart(this.ctx, {
+        // The type of chart we want to create
+        type: 'line',
+        // Configuration options go here
+        options: {}
+      });
+    }
+
 
   }
 

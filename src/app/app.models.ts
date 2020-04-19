@@ -12,3 +12,10 @@ export interface ChartItemApi {
   "Active": number; // 0,
   "Date": string; //  "2020-01-31T00:00:00Z"
 }
+
+export enum Cases {
+  Confirmed = "Confirmed",
+  Deaths = "Deaths",
+  Recovered = "Recovered",
+  Active = "Active",
+}
