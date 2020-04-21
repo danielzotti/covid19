@@ -12,11 +12,24 @@
   </div>
 
 
-  <h2>Total</h2>
+  <h2>total</h2>
   <dz-chart [data]="total" theme="dark"></dz-chart>
 
-  <h2>Daily</h2>
+  <h2>daily</h2>
   <dz-chart [data]="daily" theme="dark"></dz-chart>
+
+  <div *ngIf="selectedCountry.Slug === 'italy'">
+    <h2>
+      region total
+    </h2>
+    <dz-chart [data]="regionTotal" theme="dark"></dz-chart>
+
+    <h2>
+      region daily
+    </h2>
+    <dz-chart [data]="regionDaily" theme="dark"></dz-chart>
+  </div>
+
 
   <p class="thanks">
     thanks to <a target="_blank" href="https://covid19api.com/">Covid19 API</a> for the data.

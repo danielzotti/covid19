@@ -185,6 +185,11 @@ export class ChartComponent implements OnInit, OnChanges, AfterViewInit {
           // }
         }
       });
+
+      if (this.chart && this.data) {
+        this.chart.data = this.data;
+        this.chart.update();
+      }
     }
 
 

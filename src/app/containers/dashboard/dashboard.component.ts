@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ChartData } from "chart.js";
+import { ChartData, ChartDataSets } from "chart.js";
 import { HttpClient } from "@angular/common/http";
-import { Cases, ChartItemApi, Country } from "./dashboard.models";
+import { Cases, ChartItemApi, Country, Region, regionApiData20200421 } from "./dashboard.models";
 
 @Component({
   selector: 'dz-dashboard',
@@ -14,10 +14,17 @@ export class DashboardComponent implements OnInit {
   private readonly countriesUrl = `${this.apiBaseUrl}/countries`;
   private readonly dayOneByCountryUrl = `${this.apiBaseUrl}/dayone/country`;
 
+  // private readonly apiRegionBaseUrl = "https://github.com/pcm-dpc/COVID-19/raw/master/dati-json/dpc-covid19-ita-regioni-latest.json"
+  private readonly apiRegionBaseUrl = "https://covid19-aggiornamenti.it/api/chart?chart=1&regione=Lombardia,Emilia-Romagna,Veneto,Friuli%20Venezia%20Giulia,Abruzzo,Basilicata,Calabria,Campania,Lazio,Marche,Liguria,Molise,Valle%20d%27Aosta,Umbria,Toscana,Sicilia,Sardegna,Puglia,Piemonte"
+
   countries: Array<Country>;
   selectedCountry: Country;
+  regions: Array<Region>;
+
   total: ChartData;
   daily: ChartData;
+  regionTotal: ChartData;
+  regionDaily: ChartData;
 
   constructor(private http: HttpClient) {
   }
@@ -25,6 +32,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
 
     this.getCountries();
+    this.getRegions();
     this.selectCountry({Slug: 'italy', Country: 'Italy', ISO2: 'it'});
   }
 
@@ -34,6 +42,18 @@ export class DashboardComponent implements OnInit {
         this.countries = res.sort((a, b) => a.Slug.localeCompare(b.Slug));
       }
     )
+  }
+
+  getRegions() {
+    this.regions = regionApiData20200421;
+    this.regionTotal = this.buildRegionTotal(this.regions);
+    this.regionDaily = this.buildRegionDaily(this.regionTotal);
+    // this.http.get(`${this.apiRegionBaseUrl}`).subscribe(
+    //   (res: Array<Region>) => {
+    //     this.regions = res;
+    //     this.regionsListItem = this.buildRegion(res);
+    //   }
+    // )
   }
 
   selectCountry(country: Country) {
@@ -91,6 +111,55 @@ export class DashboardComponent implements OnInit {
     return this.buildData(res, this.mapDailyItem)
   }
 
+  buildRegionTotal(res: Array<Region>) {
+    const labels = [...new Set(res.map(i => {
+      const parts = i.data.split('-')
+      return `${parts[2].substring(0, 2)}/${parts[1]}`;
+    }))];
+
+    return {
+      labels: labels,
+      datasets: res.reduce((acc, item) => {
+        const regionIndex = acc.findIndex(i => i.label === item.denominazione_regione);
+
+        if (regionIndex !== -1 && acc[regionIndex]) {
+          return [
+            ...acc.map((i, index) => {
+              if (index === regionIndex) {
+                return {
+                  ...acc[index],
+                  data: [...acc[index].data, item.deceduti]
+                }
+              } else {
+                return acc[index]
+              }
+            })]
+        } else {
+          return [
+            ...acc,
+            {
+              label: item.denominazione_regione,
+              borderColor: this.getRandomColor(),
+              data: [item.deceduti]
+            }]
+        }
+      }, [])
+    }
+  }
+
+  buildRegionDaily(res: ChartData) {
+    return {
+      ...res,
+      datasets: res.datasets.map((d: ChartDataSets) => ({
+        ...d,
+        data: (d.data as Array<number>).reduce((acc: Array<number>, item: number) => ([
+          ...acc,
+          (item - acc.reduce((a, b) => a + b))
+        ]), [0])
+      }))
+    }
+  }
+
   mapTotalItem(res: Array<ChartItemApi>, key: Cases) {
     return res.map(i => i[key])
   }
@@ -102,4 +171,10 @@ export class DashboardComponent implements OnInit {
     ]), [0])
   }
 
+  getRandomColor(opacity = 1) {
+    return `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${opacity})`
+  }
+
 }
+
+
