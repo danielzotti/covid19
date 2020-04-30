@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartData, ChartDataSets } from "chart.js";
 import { HttpClient } from "@angular/common/http";
-import { Cases, ChartItemApi, Country, Region, regionApiData20200421 } from "./dashboard.models";
+import { Cases, ChartItemApi, Country, Region } from "./dashboard.models";
 
 @Component({
   selector: 'dz-dashboard',
@@ -15,7 +15,8 @@ export class DashboardComponent implements OnInit {
   private readonly dayOneByCountryUrl = `${this.apiBaseUrl}/dayone/country`;
 
   // private readonly apiRegionBaseUrl = "https://github.com/pcm-dpc/COVID-19/raw/master/dati-json/dpc-covid19-ita-regioni-latest.json"
-  private readonly apiRegionBaseUrl = "https://covid19-aggiornamenti.it/api/chart?chart=1&regione=Lombardia,Emilia-Romagna,Veneto,Friuli%20Venezia%20Giulia,Abruzzo,Basilicata,Calabria,Campania,Lazio,Marche,Liguria,Molise,Valle%20d%27Aosta,Umbria,Toscana,Sicilia,Sardegna,Puglia,Piemonte"
+  // private readonly apiRegionBaseUrl = "https://covid19-aggiornamenti.it/api/chart?chart=1&regione=Lombardia,Emilia-Romagna,Veneto,Friuli%20Venezia%20Giulia,Abruzzo,Basilicata,Calabria,Campania,Lazio,Marche,Liguria,Molise,Valle%20d%27Aosta,Umbria,Toscana,Sicilia,Sardegna,Puglia,Piemonte"
+  private readonly apiRegionBaseUrl = `assets/regions.json`;
 
   countries: Array<Country>;
   selectedCountry: Country;
@@ -45,15 +46,16 @@ export class DashboardComponent implements OnInit {
   }
 
   getRegions() {
-    this.regions = regionApiData20200421;
-    this.regionTotal = this.buildRegionTotal(this.regions);
-    this.regionDaily = this.buildRegionDaily(this.regionTotal);
-    // this.http.get(`${this.apiRegionBaseUrl}`).subscribe(
-    //   (res: Array<Region>) => {
-    //     this.regions = res;
-    //     this.regionsListItem = this.buildRegion(res);
-    //   }
-    // )
+    // this.regions = regionApiData;
+    // this.regionTotal = this.buildRegionTotal(this.regions);
+    // this.regionDaily = this.buildRegionDaily(this.regionTotal);
+    this.http.get(`${this.apiRegionBaseUrl}`).subscribe(
+      (res: Array<Region>) => {
+        this.regions = res;
+        this.regionTotal = this.buildRegionTotal(this.regions);
+        this.regionDaily = this.buildRegionDaily(this.regionTotal);
+      }
+    )
   }
 
   selectCountry(country: Country) {
